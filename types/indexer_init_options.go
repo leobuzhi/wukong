@@ -2,8 +2,8 @@ package types
 
 // 这些常数定义了反向索引表存储的数据类型
 const (
-	// 仅存储文档的docId
-	DocIdsIndex = 0
+	// 仅存储文档的docID
+	DocIDsIndex = 0
 
 	// 存储关键词的词频，用于计算BM25
 	FrequenciesIndex = 1

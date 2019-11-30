@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"github.com/cznic/kv"
 	"io"
+
+	"github.com/cznic/kv"
 )
 
 type kvStorage struct {

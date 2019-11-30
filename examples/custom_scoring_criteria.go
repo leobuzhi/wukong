@@ -17,8 +17,8 @@ import (
 	"encoding/gob"
 	"flag"
 	"fmt"
-	"github.com/huichen/wukong/engine"
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/engine"
+	"github.com/leobuzhi/wukong/types"
 	"log"
 	"os"
 	"reflect"
@@ -154,7 +154,7 @@ func main() {
 	// 显示
 	fmt.Println()
 	for _, doc := range output.Docs {
-		fmt.Printf("%v %s\n\n", doc.Scores, lines[doc.DocId])
+		fmt.Printf("%v %s\n\n", doc.Scores, lines[doc.DocID])
 	}
 	log.Printf("查询完毕")
 }

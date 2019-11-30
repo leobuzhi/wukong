@@ -1,8 +1,9 @@
 package engine
 
 import (
-	"github.com/huichen/wukong/types"
 	"sync/atomic"
+
+	"github.com/leobuzhi/wukong/types"
 )
 
 type indexerAddDocumentRequest struct {
@@ -14,14 +15,14 @@ type indexerLookupRequest struct {
 	countDocsOnly       bool
 	tokens              []string
 	labels              []string
-	docIds              map[uint64]bool
+	docIDs              map[uint64]bool
 	options             types.RankOptions
 	rankerReturnChannel chan rankerReturnRequest
 	orderless           bool
 }
 
 type indexerRemoveDocRequest struct {
-	docId       uint64
+	docID       uint64
 	forceUpdate bool
 }
 
@@ -43,8 +44,8 @@ func (engine *Engine) indexerAddDocumentWorker(shard int) {
 func (engine *Engine) indexerRemoveDocWorker(shard int) {
 	for {
 		request := <-engine.indexerRemoveDocChannels[shard]
-		engine.indexers[shard].RemoveDocumentToCache(request.docId, request.forceUpdate)
-		if request.docId != 0 {
+		engine.indexers[shard].RemoveDocumentToCache(request.docID, request.forceUpdate)
+		if request.docID != 0 {
 			atomic.AddUint64(&engine.numDocumentsRemoved, 1)
 		}
 		if request.forceUpdate {
@@ -59,10 +60,10 @@ func (engine *Engine) indexerLookupWorker(shard int) {
 
 		var docs []types.IndexedDocument
 		var numDocs int
-		if request.docIds == nil {
+		if request.docIDs == nil {
 			docs, numDocs = engine.indexers[shard].Lookup(request.tokens, request.labels, nil, request.countDocsOnly)
 		} else {
-			docs, numDocs = engine.indexers[shard].Lookup(request.tokens, request.labels, request.docIds, request.countDocsOnly)
+			docs, numDocs = engine.indexers[shard].Lookup(request.tokens, request.labels, request.docIDs, request.countDocsOnly)
 		}
 
 		if request.countDocsOnly {
@@ -79,7 +80,7 @@ func (engine *Engine) indexerLookupWorker(shard int) {
 			var outputDocs []types.ScoredDocument
 			for _, d := range docs {
 				outputDocs = append(outputDocs, types.ScoredDocument{
-					DocId: d.DocId,
+					DocID: d.DocID,
 					TokenSnippetLocations: d.TokenSnippetLocations,
 					TokenLocations:        d.TokenLocations})
 			}

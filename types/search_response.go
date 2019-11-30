@@ -1,7 +1,7 @@
 package types
 
 import (
-	"github.com/huichen/wukong/utils"
+	"github.com/leobuzhi/wukong/utils"
 )
 
 type SearchResponse struct {
@@ -19,7 +19,7 @@ type SearchResponse struct {
 }
 
 type ScoredDocument struct {
-	DocId uint64
+	DocID uint64
 
 	// 文档的打分值
 	// 搜索结果按照Scores的值排序，先按照第一个数排，如果相同则按照第二个数排序，依次类推。

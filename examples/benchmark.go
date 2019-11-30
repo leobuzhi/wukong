@@ -13,8 +13,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/huichen/wukong/engine"
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/engine"
+	"github.com/leobuzhi/wukong/types"
 )
 
 const (
@@ -43,7 +43,7 @@ var (
 	memprofile                = flag.String("memprofile", "", "内存profile文件")
 	num_repeat_text           = flag.Int("num_repeat_text", 10, "文本重复加入多少次")
 	num_delete_docs           = flag.Int("num_delete_docs", 1000, "测试删除文档的个数")
-	index_type                = flag.Int("index_type", types.DocIdsIndex, "索引类型")
+	index_type                = flag.Int("index_type", types.DocIDsIndex, "索引类型")
 	use_persistent            = flag.Bool("use_persistent", false, "是否使用持久存储")
 	persistent_storage_folder = flag.String("persistent_storage_folder", "benchmark.persistent", "持久存储数据库保存的目录")
 	persistent_storage_shards = flag.Int("persistent_storage_shards", 0, "持久数据库存储裂分数目")
@@ -123,16 +123,16 @@ func main() {
 
 	// 建索引
 	log.Print("建索引 ... ")
-	// 打乱 docId 顺序进行测试，若 docId 最大值超 Int 则不能用 rand.Perm 方法
-	docIds := rand.Perm(*num_repeat_text * len(lines))
-	docIdx := 0
+	// 打乱 docID 顺序进行测试，若 docID 最大值超 Int 则不能用 rand.Perm 方法
+	docIDs := rand.Perm(*num_repeat_text * len(lines))
+	docIDx := 0
 	for i := 0; i < *num_repeat_text; i++ {
 		for _, line := range lines {
-			searcher.IndexDocument(uint64(docIds[docIdx]+1), types.DocumentIndexData{
+			searcher.IndexDocument(uint64(docIDs[docIDx]+1), types.DocumentIndexData{
 				Content: line}, false)
-			docIdx++
-			if docIdx-docIdx/1000000*1000000 == 0 {
-				log.Printf("已索引%d百万文档", docIdx/1000000)
+			docIDx++
+			if docIDx-docIDx/1000000*1000000 == 0 {
+				log.Printf("已索引%d百万文档", docIDx/1000000)
 				runtime.GC()
 			}
 		}
@@ -189,7 +189,7 @@ func main() {
 		float64(numRepeatQuery*numQueryThreads*len(searchQueries))/
 			t5.Sub(t4).Seconds())
 
-	// 测试搜索结果输出，因为不同 case 的 docId 对应不上，所以只测试总数
+	// 测试搜索结果输出，因为不同 case 的 docID 对应不上，所以只测试总数
 	recordResponse.RLock()
 	for keyword, count := range recordResponse.count {
 		log.Printf("关键词 [%s] 共搜索到 %d 个相关文档", keyword, count)

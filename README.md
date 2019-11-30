@@ -1,8 +1,9 @@
-悟空全文搜索引擎
+# 悟空全文搜索引擎
+
 ======
 
 * [高效索引和搜索](/docs/benchmarking.md)（1M条微博500M数据28秒索引完，1.65毫秒搜索响应时间，19K搜索QPS）
-* 支持中文分词（使用[sego分词包](https://github.com/huichen/sego)并发分词，速度27MB/秒）
+* 支持中文分词（使用[sego分词包](https://github.com/leobuzhi/sego)并发分词，速度27MB/秒）
 * 支持计算关键词在文本中的[紧邻距离](/docs/token_proximity.md)（token proximity）
 * 支持计算[BM25相关度](/docs/bm25.md)
 * 支持[自定义评分字段和评分规则](/docs/custom_scoring_criteria.md)
@@ -13,23 +14,24 @@
 
 [微博搜索demo](http://vhaa7.fmt.tifan.net:8080/)
 
-# 安装/更新
+## 安装/更新
 
-```
-go get -u -v github.com/huichen/wukong
+```sh
+go get -u -v github.com/leobuzhi/wukong
 ```
 
 需要Go版本至少1.1.1
 
-# 使用
+## 使用
 
 先看一个例子（来自[examples/simplest_example.go](/examples/simplest_example.go)）
+
 ```go
 package main
 
 import (
-	"github.com/huichen/wukong/engine"
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/engine"
+	"github.com/leobuzhi/wukong/types"
 	"log"
 )
 
@@ -41,10 +43,10 @@ var (
 func main() {
 	// 初始化
 	searcher.Init(types.EngineInitOptions{
-		SegmenterDictionaries: "github.com/huichen/wukong/data/dictionary.txt"})
+		SegmenterDictionaries: "github.com/leobuzhi/wukong/data/dictionary.txt"})
 	defer searcher.Close()
 
-	// 将文档加入索引，docId 从1开始
+	// 将文档加入索引，docID 从1开始
 	searcher.IndexDocument(1, types.DocumentIndexData{Content: "此次百度收购将成中国互联网最大并购"}, false)
 	searcher.IndexDocument(2, types.DocumentIndexData{Content: "百度宣布拟全资收购91无线业务"}, false)
 	searcher.IndexDocument(3, types.DocumentIndexData{Content: "百度是中国最大的搜索引擎"}, false)

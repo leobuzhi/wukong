@@ -1,10 +1,11 @@
 package core
 
 import (
-	"github.com/huichen/wukong/types"
-	"github.com/huichen/wukong/utils"
 	"reflect"
 	"testing"
+
+	"github.com/leobuzhi/wukong/types"
+	"github.com/leobuzhi/wukong/utils"
 )
 
 type DummyScoringFields struct {
@@ -38,17 +39,17 @@ func TestRankDocument(t *testing.T) {
 	ranker.AddDoc(4, DummyScoringFields{})
 
 	scoredDocs, _ := ranker.Rank([]types.IndexedDocument{
-		types.IndexedDocument{DocId: 1, BM25: 6},
-		types.IndexedDocument{DocId: 3, BM25: 24},
-		types.IndexedDocument{DocId: 4, BM25: 18},
+		types.IndexedDocument{DocID: 1, BM25: 6},
+		types.IndexedDocument{DocID: 3, BM25: 24},
+		types.IndexedDocument{DocID: 4, BM25: 18},
 	}, types.RankOptions{ScoringCriteria: types.RankByBM25{}}, false)
 	utils.Expect(t, "[3 [24000 ]] [4 [18000 ]] [1 [6000 ]] ", scoredDocsToString(scoredDocs))
 
 	scoredDocs, _ = ranker.Rank([]types.IndexedDocument{
-		types.IndexedDocument{DocId: 1, BM25: 6},
-		types.IndexedDocument{DocId: 3, BM25: 24},
-		types.IndexedDocument{DocId: 2, BM25: 0},
-		types.IndexedDocument{DocId: 4, BM25: 18},
+		types.IndexedDocument{DocID: 1, BM25: 6},
+		types.IndexedDocument{DocID: 3, BM25: 24},
+		types.IndexedDocument{DocID: 2, BM25: 0},
+		types.IndexedDocument{DocID: 4, BM25: 18},
 	}, types.RankOptions{ScoringCriteria: types.RankByBM25{}, ReverseOrder: true}, false)
 	// doc0因为没有AddDoc所以没有添加进来
 	utils.Expect(t, "[1 [6000 ]] [4 [18000 ]] [3 [24000 ]] ", scoredDocsToString(scoredDocs))
@@ -80,19 +81,19 @@ func TestRankWithCriteria(t *testing.T) {
 
 	criteria := DummyScoringCriteria{}
 	scoredDocs, _ := ranker.Rank([]types.IndexedDocument{
-		types.IndexedDocument{DocId: 1, TokenProximity: 6},
-		types.IndexedDocument{DocId: 2, TokenProximity: -1},
-		types.IndexedDocument{DocId: 3, TokenProximity: 24},
-		types.IndexedDocument{DocId: 4, TokenProximity: 18},
+		types.IndexedDocument{DocID: 1, TokenProximity: 6},
+		types.IndexedDocument{DocID: 2, TokenProximity: -1},
+		types.IndexedDocument{DocID: 3, TokenProximity: 24},
+		types.IndexedDocument{DocID: 4, TokenProximity: 18},
 	}, types.RankOptions{ScoringCriteria: criteria}, false)
 	utils.Expect(t, "[1 [25300 ]] [3 [17300 ]] [2 [3000 ]] [4 [1300 ]] ", scoredDocsToString(scoredDocs))
 
 	criteria.Threshold = 4
 	scoredDocs, _ = ranker.Rank([]types.IndexedDocument{
-		types.IndexedDocument{DocId: 1, TokenProximity: 6},
-		types.IndexedDocument{DocId: 2, TokenProximity: -1},
-		types.IndexedDocument{DocId: 3, TokenProximity: 24},
-		types.IndexedDocument{DocId: 4, TokenProximity: 18},
+		types.IndexedDocument{DocID: 1, TokenProximity: 6},
+		types.IndexedDocument{DocID: 2, TokenProximity: -1},
+		types.IndexedDocument{DocID: 3, TokenProximity: 24},
+		types.IndexedDocument{DocID: 4, TokenProximity: 18},
 	}, types.RankOptions{ScoringCriteria: criteria}, false)
 	utils.Expect(t, "[1 [25300 ]] [3 [17300 ]] ", scoredDocsToString(scoredDocs))
 }
@@ -119,10 +120,10 @@ func TestRemoveDoc(t *testing.T) {
 
 	criteria := DummyScoringCriteria{}
 	scoredDocs, _ := ranker.Rank([]types.IndexedDocument{
-		types.IndexedDocument{DocId: 1, TokenProximity: 6},
-		types.IndexedDocument{DocId: 2, TokenProximity: -1},
-		types.IndexedDocument{DocId: 3, TokenProximity: 24},
-		types.IndexedDocument{DocId: 4, TokenProximity: 18},
+		types.IndexedDocument{DocID: 1, TokenProximity: 6},
+		types.IndexedDocument{DocID: 2, TokenProximity: -1},
+		types.IndexedDocument{DocID: 3, TokenProximity: 24},
+		types.IndexedDocument{DocID: 4, TokenProximity: 18},
 	}, types.RankOptions{ScoringCriteria: criteria}, false)
 	utils.Expect(t, "[1 [25300 ]] [2 [3000 ]] ", scoredDocsToString(scoredDocs))
 }

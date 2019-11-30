@@ -1,8 +1,8 @@
 package types
 
 type DocumentIndex struct {
-	// 文本的DocId
-	DocId uint64
+	// 文本的DocID
+	DocID uint64
 
 	// 文本的关键词长
 	TokenLength float32
@@ -25,7 +25,7 @@ type KeywordIndex struct {
 
 // 索引器返回结果
 type IndexedDocument struct {
-	DocId uint64
+	DocID uint64
 
 	// BM25，仅当索引类型为FrequenciesIndex或者LocationsIndex时返回有效值
 	BM25 float32
@@ -53,18 +53,18 @@ func (docs DocumentsIndex) Swap(i, j int) {
 	docs[i], docs[j] = docs[j], docs[i]
 }
 func (docs DocumentsIndex) Less(i, j int) bool {
-	return docs[i].DocId < docs[j].DocId
+	return docs[i].DocID < docs[j].DocID
 }
 
 // 方便批量删除文档索引
-type DocumentsId []uint64
+type DocumentsID []uint64
 
-func (docs DocumentsId) Len() int {
+func (docs DocumentsID) Len() int {
 	return len(docs)
 }
-func (docs DocumentsId) Swap(i, j int) {
+func (docs DocumentsID) Swap(i, j int) {
 	docs[i], docs[j] = docs[j], docs[i]
 }
-func (docs DocumentsId) Less(i, j int) bool {
+func (docs DocumentsID) Less(i, j int) bool {
 	return docs[i] < docs[j]
 }

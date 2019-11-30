@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/types"
 )
 
 type rankerAddDocRequest struct {
-	docId  uint64
+	docID  uint64
 	fields interface{}
 }
 
@@ -22,13 +22,13 @@ type rankerReturnRequest struct {
 }
 
 type rankerRemoveDocRequest struct {
-	docId uint64
+	docID uint64
 }
 
 func (engine *Engine) rankerAddDocWorker(shard int) {
 	for {
 		request := <-engine.rankerAddDocChannels[shard]
-		engine.rankers[shard].AddDoc(request.docId, request.fields)
+		engine.rankers[shard].AddDoc(request.docID, request.fields)
 	}
 }
 
@@ -47,6 +47,6 @@ func (engine *Engine) rankerRankWorker(shard int) {
 func (engine *Engine) rankerRemoveDocWorker(shard int) {
 	for {
 		request := <-engine.rankerRemoveDocChannels[shard]
-		engine.rankers[shard].RemoveDoc(request.docId)
+		engine.rankers[shard].RemoveDoc(request.docID)
 	}
 }

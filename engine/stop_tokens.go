@@ -7,13 +7,13 @@ import (
 )
 
 type StopTokens struct {
-	stopTokens map[string]bool
+	stopTokens map[string]struct{}
 }
 
 // 从stopTokenFile中读入停用词，一个词一行
 // 文档索引建立时会跳过这些停用词
 func (st *StopTokens) Init(stopTokenFile string) {
-	st.stopTokens = make(map[string]bool)
+	st.stopTokens = make(map[string]struct{})
 	if stopTokenFile == "" {
 		return
 	}
@@ -28,7 +28,7 @@ func (st *StopTokens) Init(stopTokenFile string) {
 	for scanner.Scan() {
 		text := scanner.Text()
 		if text != "" {
-			st.stopTokens[text] = true
+			st.stopTokens[text] = struct{}{}
 		}
 	}
 

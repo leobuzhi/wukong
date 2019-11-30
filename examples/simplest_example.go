@@ -7,8 +7,8 @@
 package main
 
 import (
-	"github.com/huichen/wukong/engine"
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/engine"
+	"github.com/leobuzhi/wukong/types"
 	"log"
 )
 
@@ -23,7 +23,7 @@ func main() {
 		SegmenterDictionaries: "../data/dictionary.txt"})
 	defer searcher.Close()
 
-	// 将文档加入索引，docId 从1开始
+	// 将文档加入索引，docID 从1开始
 	searcher.IndexDocument(1, types.DocumentIndexData{Content: "此次百度收购将成中国互联网最大并购"}, false)
 	searcher.IndexDocument(2, types.DocumentIndexData{Content: "百度宣布拟全资收购91无线业务"}, false)
 	searcher.IndexDocument(3, types.DocumentIndexData{Content: "百度是中国最大的搜索引擎"}, false)

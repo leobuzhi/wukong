@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/gob"
-	"github.com/huichen/wukong/types"
 	"sync/atomic"
+
+	"github.com/leobuzhi/wukong/types"
 )
 
 type persistentStorageIndexDocumentRequest struct {
-	docId uint64
+	docID uint64
 	data  types.DocumentIndexData
 }
 
@@ -19,7 +20,7 @@ func (engine *Engine) persistentStorageIndexDocumentWorker(shard int) {
 
 		// 得到key
 		b := make([]byte, 10)
-		length := binary.PutUvarint(b, request.docId)
+		length := binary.PutUvarint(b, request.docID)
 
 		// 得到value
 		var buf bytes.Buffer
@@ -36,10 +37,10 @@ func (engine *Engine) persistentStorageIndexDocumentWorker(shard int) {
 	}
 }
 
-func (engine *Engine) persistentStorageRemoveDocumentWorker(docId uint64, shard uint32) {
+func (engine *Engine) persistentStorageRemoveDocumentWorker(docID uint64, shard uint32) {
 	// 得到key
 	b := make([]byte, 10)
-	length := binary.PutUvarint(b, docId)
+	length := binary.PutUvarint(b, docID)
 
 	// 从数据库删除该key
 	engine.dbs[shard].Delete(b[0:length])
@@ -49,7 +50,7 @@ func (engine *Engine) persistentStorageInitWorker(shard int) {
 	engine.dbs[shard].ForEach(func(k, v []byte) error {
 		key, value := k, v
 		// 得到docID
-		docId, _ := binary.Uvarint(key)
+		docID, _ := binary.Uvarint(key)
 
 		// 得到data
 		buf := bytes.NewReader(value)
@@ -58,7 +59,7 @@ func (engine *Engine) persistentStorageInitWorker(shard int) {
 		err := dec.Decode(&data)
 		if err == nil {
 			// 添加索引
-			engine.internalIndexDocument(docId, data, false)
+			engine.internalIndexDocument(docID, data, false)
 		}
 		return nil
 	})

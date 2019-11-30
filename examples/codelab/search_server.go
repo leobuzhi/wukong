@@ -6,8 +6,6 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"flag"
-	"github.com/huichen/wukong/engine"
-	"github.com/huichen/wukong/types"
 	"io"
 	"log"
 	"net/http"
@@ -16,6 +14,9 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/leobuzhi/wukong/engine"
+	"github.com/leobuzhi/wukong/types"
 )
 
 const (
@@ -24,16 +25,16 @@ const (
 )
 
 var (
-	searcher = engine.Engine{}
-	wbs      = map[uint64]Weibo{}
-	weiboData = flag.String("weibo_data", "../../testdata/weibo_data.txt", "微博数据文件")
-	dictFile = flag.String("dict_file", "../../data/dictionary.txt", "词典文件")
+	searcher      = engine.Engine{}
+	wbs           = map[uint64]Weibo{}
+	weiboData     = flag.String("weibo_data", "../../testdata/weibo_data.txt", "微博数据文件")
+	dictFile      = flag.String("dict_file", "../../data/dictionary.txt", "词典文件")
 	stopTokenFile = flag.String("stop_token_file", "../../data/stop_tokens.txt", "停用词文件")
-	staticFolder = flag.String("static_folder", "static", "静态文件目录")
+	staticFolder  = flag.String("static_folder", "static", "静态文件目录")
 )
 
 type Weibo struct {
-	Id           uint64 `json:"id"`
+	ID           uint64 `json:"id"`
 	Timestamp    uint64 `json:"timestamp"`
 	UserName     string `json:"user_name"`
 	RepostsCount uint64 `json:"reposts_count"`
@@ -57,23 +58,23 @@ func indexWeibo() {
 			continue
 		}
 		wb := Weibo{}
-		wb.Id, _ = strconv.ParseUint(data[0], 10, 64)
+		wb.ID, _ = strconv.ParseUint(data[0], 10, 64)
 		wb.Timestamp, _ = strconv.ParseUint(data[1], 10, 64)
 		wb.UserName = data[3]
 		wb.RepostsCount, _ = strconv.ParseUint(data[4], 10, 64)
 		wb.Text = data[9]
-		wbs[wb.Id] = wb
+		wbs[wb.ID] = wb
 	}
 
 	log.Print("添加索引")
-	for docId, weibo := range wbs {
-		searcher.IndexDocument(docId, types.DocumentIndexData{
+	for docID, weibo := range wbs {
+		searcher.IndexDocument(docID, types.DocumentIndexData{
 			Content: weibo.Text,
 			Fields: WeiboScoringFields{
 				Timestamp:    weibo.Timestamp,
 				RepostsCount: weibo.RepostsCount,
 			},
-		})
+		}, false)
 	}
 
 	searcher.FlushIndex()
@@ -129,7 +130,7 @@ func JsonRpcServer(w http.ResponseWriter, req *http.Request) {
 	// 整理为输出格式
 	docs := []*Weibo{}
 	for _, doc := range output.Docs {
-		wb := wbs[doc.DocId]
+		wb := wbs[doc.DocID]
 		for _, t := range output.Tokens {
 			wb.Text = strings.Replace(wb.Text, t, "<font color=red>"+t+"</font>", -1)
 		}
@@ -157,8 +158,11 @@ func main() {
 		IndexerInitOptions: &types.IndexerInitOptions{
 			IndexType: types.LocationsIndex,
 		},
+		UsePersistentStorage:    true,
+		PersistentStorageFolder: "/tmp/wukong",
+		PersistentStorageShards: 5,
 		// 如果你希望使用持久存储，启用下面的选项
-		// 默认使用boltdb持久化，如果你希望修改数据库类型
+		// 默认使用 boltdb 持久化，如果你希望修改数据库类型
 		// 请修改 WUKONG_STORAGE_ENGINE 环境变量
 		// UsePersistentStorage: true,
 		// PersistentStorageFolder: "weibo_search",

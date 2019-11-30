@@ -1,11 +1,11 @@
 package engine
 
 import (
-	"github.com/huichen/wukong/types"
+	"github.com/leobuzhi/wukong/types"
 )
 
 type segmenterRequest struct {
-	docId       uint64
+	docID       uint64
 	hash        uint32
 	data        types.DocumentIndexData
 	forceUpdate bool
@@ -14,7 +14,7 @@ type segmenterRequest struct {
 func (engine *Engine) segmenterWorker() {
 	for {
 		request := <-engine.segmenterChannel
-		if request.docId == 0 {
+		if request.docID == 0 {
 			if request.forceUpdate {
 				for i := 0; i < engine.initOptions.NumShards; i++ {
 					engine.indexerAddDocChannels[i] <- indexerAddDocumentRequest{forceUpdate: true}
@@ -65,7 +65,7 @@ func (engine *Engine) segmenterWorker() {
 
 		indexerRequest := indexerAddDocumentRequest{
 			document: &types.DocumentIndex{
-				DocId:       request.docId,
+				DocID:       request.docID,
 				TokenLength: float32(numTokens),
 				Keywords:    make([]types.KeywordIndex, len(tokensMap)),
 			},
@@ -91,7 +91,7 @@ func (engine *Engine) segmenterWorker() {
 			}
 		}
 		rankerRequest := rankerAddDocRequest{
-			docId: request.docId, fields: request.data.Fields}
+			docID: request.docID, fields: request.data.Fields}
 		engine.rankerAddDocChannels[shard] <- rankerRequest
 	}
 }

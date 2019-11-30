@@ -2,11 +2,12 @@ package engine
 
 import (
 	"encoding/gob"
-	"github.com/huichen/wukong/types"
-	"github.com/huichen/wukong/utils"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/leobuzhi/wukong/types"
+	"github.com/leobuzhi/wukong/utils"
 )
 
 type ScoringFields struct {
@@ -14,28 +15,28 @@ type ScoringFields struct {
 }
 
 func AddDocs(engine *Engine) {
-	docId := uint64(1)
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID := uint64(1)
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "中国有十三亿人口人口",
 		Fields:  ScoringFields{1, 2, 3},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "中国人口",
 		Fields:  nil,
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "有人口",
 		Fields:  ScoringFields{2, 3, 1},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "有十三亿人口",
 		Fields:  ScoringFields{2, 3, 3},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "中国十三亿人口",
 		Fields:  ScoringFields{0, 9, 1},
 	}, false)
@@ -43,28 +44,28 @@ func AddDocs(engine *Engine) {
 }
 
 func addDocsWithLabels(engine *Engine) {
-	docId := uint64(1)
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID := uint64(1)
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "此次百度收购将成中国互联网最大并购",
 		Labels:  []string{"百度", "中国"},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "百度宣布拟全资收购91无线业务",
 		Labels:  []string{"百度"},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "百度是中国最大的搜索引擎",
 		Labels:  []string{"百度"},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "百度在研制无人汽车",
 		Labels:  []string{"百度"},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "BAT是中国互联网三巨头",
 		Labels:  []string{"百度"},
 	}, false)
@@ -104,15 +105,15 @@ func TestEngineIndexDocument(t *testing.T) {
 	utils.Expect(t, "人口", outputs.Tokens[1])
 	utils.Expect(t, "3", len(outputs.Docs))
 
-	utils.Expect(t, "2", outputs.Docs[0].DocId)
+	utils.Expect(t, "2", outputs.Docs[0].DocID)
 	utils.Expect(t, "1000", int(outputs.Docs[0].Scores[0]*1000))
 	utils.Expect(t, "[0 6]", outputs.Docs[0].TokenSnippetLocations)
 
-	utils.Expect(t, "5", outputs.Docs[1].DocId)
+	utils.Expect(t, "5", outputs.Docs[1].DocID)
 	utils.Expect(t, "100", int(outputs.Docs[1].Scores[0]*1000))
 	utils.Expect(t, "[0 15]", outputs.Docs[1].TokenSnippetLocations)
 
-	utils.Expect(t, "1", outputs.Docs[2].DocId)
+	utils.Expect(t, "1", outputs.Docs[2].DocID)
 	utils.Expect(t, "76", int(outputs.Docs[2].Scores[0]*1000))
 	utils.Expect(t, "[0 18]", outputs.Docs[2].TokenSnippetLocations)
 }
@@ -137,9 +138,9 @@ func TestReverseOrder(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "3", len(outputs.Docs))
 
-	utils.Expect(t, "1", outputs.Docs[0].DocId)
-	utils.Expect(t, "5", outputs.Docs[1].DocId)
-	utils.Expect(t, "2", outputs.Docs[2].DocId)
+	utils.Expect(t, "1", outputs.Docs[0].DocID)
+	utils.Expect(t, "5", outputs.Docs[1].DocID)
+	utils.Expect(t, "2", outputs.Docs[2].DocID)
 }
 
 func TestOffsetAndMaxOutputs(t *testing.T) {
@@ -162,8 +163,8 @@ func TestOffsetAndMaxOutputs(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "5", outputs.Docs[0].DocId)
-	utils.Expect(t, "2", outputs.Docs[1].DocId)
+	utils.Expect(t, "5", outputs.Docs[0].DocID)
+	utils.Expect(t, "2", outputs.Docs[1].DocID)
 }
 
 type TestScoringCriteria struct {
@@ -195,10 +196,10 @@ func TestSearchWithCriteria(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "1", outputs.Docs[0].DocId)
+	utils.Expect(t, "1", outputs.Docs[0].DocID)
 	utils.Expect(t, "18000", int(outputs.Docs[0].Scores[0]*1000))
 
-	utils.Expect(t, "5", outputs.Docs[1].DocId)
+	utils.Expect(t, "5", outputs.Docs[1].DocID)
 	utils.Expect(t, "9000", int(outputs.Docs[1].Scores[0]*1000))
 }
 
@@ -216,10 +217,10 @@ func TestCompactIndex(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "5", outputs.Docs[0].DocId)
+	utils.Expect(t, "5", outputs.Docs[0].DocID)
 	utils.Expect(t, "9000", int(outputs.Docs[0].Scores[0]*1000))
 
-	utils.Expect(t, "1", outputs.Docs[1].DocId)
+	utils.Expect(t, "1", outputs.Docs[1].DocID)
 	utils.Expect(t, "6000", int(outputs.Docs[1].Scores[0]*1000))
 }
 
@@ -251,10 +252,10 @@ func TestFrequenciesIndex(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "5", outputs.Docs[0].DocId)
+	utils.Expect(t, "5", outputs.Docs[0].DocID)
 	utils.Expect(t, "2349", int(outputs.Docs[0].Scores[0]*1000))
 
-	utils.Expect(t, "1", outputs.Docs[1].DocId)
+	utils.Expect(t, "1", outputs.Docs[1].DocID)
 	utils.Expect(t, "2320", int(outputs.Docs[1].Scores[0]*1000))
 }
 
@@ -280,9 +281,9 @@ func TestRemoveDocument(t *testing.T) {
 	outputs := engine.Search(types.SearchRequest{Text: "中国人口"})
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "6", outputs.Docs[0].DocId)
+	utils.Expect(t, "6", outputs.Docs[0].DocID)
 	utils.Expect(t, "9000", int(outputs.Docs[0].Scores[0]*1000))
-	utils.Expect(t, "1", outputs.Docs[1].DocId)
+	utils.Expect(t, "1", outputs.Docs[1].DocID)
 	utils.Expect(t, "6000", int(outputs.Docs[1].Scores[0]*1000))
 }
 
@@ -300,8 +301,8 @@ func TestEngineIndexDocumentWithTokens(t *testing.T) {
 		},
 	})
 
-	docId := uint64(1)
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID := uint64(1)
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "",
 		Tokens: []types.TokenData{
 			{"中国", []int{0}},
@@ -309,8 +310,8 @@ func TestEngineIndexDocumentWithTokens(t *testing.T) {
 		},
 		Fields: ScoringFields{1, 2, 3},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "",
 		Tokens: []types.TokenData{
 			{"中国", []int{0}},
@@ -318,8 +319,8 @@ func TestEngineIndexDocumentWithTokens(t *testing.T) {
 		},
 		Fields: ScoringFields{1, 2, 3},
 	}, false)
-	docId++
-	engine.IndexDocument(docId, types.DocumentIndexData{
+	docID++
+	engine.IndexDocument(docID, types.DocumentIndexData{
 		Content: "中国十三亿人口",
 		Fields:  ScoringFields{0, 9, 1},
 	}, false)
@@ -331,15 +332,15 @@ func TestEngineIndexDocumentWithTokens(t *testing.T) {
 	utils.Expect(t, "人口", outputs.Tokens[1])
 	utils.Expect(t, "3", len(outputs.Docs))
 
-	utils.Expect(t, "2", outputs.Docs[0].DocId)
+	utils.Expect(t, "2", outputs.Docs[0].DocID)
 	utils.Expect(t, "1000", int(outputs.Docs[0].Scores[0]*1000))
 	utils.Expect(t, "[0 6]", outputs.Docs[0].TokenSnippetLocations)
 
-	utils.Expect(t, "3", outputs.Docs[1].DocId)
+	utils.Expect(t, "3", outputs.Docs[1].DocID)
 	utils.Expect(t, "100", int(outputs.Docs[1].Scores[0]*1000))
 	utils.Expect(t, "[0 15]", outputs.Docs[1].TokenSnippetLocations)
 
-	utils.Expect(t, "1", outputs.Docs[2].DocId)
+	utils.Expect(t, "1", outputs.Docs[2].DocID)
 	utils.Expect(t, "76", int(outputs.Docs[2].Scores[0]*1000))
 	utils.Expect(t, "[0 18]", outputs.Docs[2].TokenSnippetLocations)
 }
@@ -355,7 +356,7 @@ func TestEngineIndexDocumentWithContentAndLabels(t *testing.T) {
 	engine2.Init(types.EngineInitOptions{
 		SegmenterDictionaries: "../data/dictionary.txt",
 		IndexerInitOptions: &types.IndexerInitOptions{
-			IndexType: types.DocIdsIndex,
+			IndexType: types.DocIDsIndex,
 		},
 	})
 
@@ -416,11 +417,11 @@ func TestEngineIndexDocumentWithPersistentStorage(t *testing.T) {
 	utils.Expect(t, "人口", outputs.Tokens[1])
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "2", outputs.Docs[0].DocId)
+	utils.Expect(t, "2", outputs.Docs[0].DocID)
 	utils.Expect(t, "1000", int(outputs.Docs[0].Scores[0]*1000))
 	utils.Expect(t, "[0 6]", outputs.Docs[0].TokenSnippetLocations)
 
-	utils.Expect(t, "1", outputs.Docs[1].DocId)
+	utils.Expect(t, "1", outputs.Docs[1].DocID)
 	utils.Expect(t, "76", int(outputs.Docs[1].Scores[0]*1000))
 	utils.Expect(t, "[0 18]", outputs.Docs[1].TokenSnippetLocations)
 
@@ -470,23 +471,23 @@ func TestSearchWithin(t *testing.T) {
 
 	AddDocs(&engine)
 
-	docIds := make(map[uint64]bool)
-	docIds[5] = true
-	docIds[1] = true
+	docIDs := make(map[uint64]bool)
+	docIDs[5] = true
+	docIDs[1] = true
 	outputs := engine.Search(types.SearchRequest{
 		Text:   "中国人口",
-		DocIds: docIds,
+		DocIDs: docIDs,
 	})
 	utils.Expect(t, "2", len(outputs.Tokens))
 	utils.Expect(t, "中国", outputs.Tokens[0])
 	utils.Expect(t, "人口", outputs.Tokens[1])
 	utils.Expect(t, "2", len(outputs.Docs))
 
-	utils.Expect(t, "1", outputs.Docs[0].DocId)
+	utils.Expect(t, "1", outputs.Docs[0].DocID)
 	utils.Expect(t, "76", int(outputs.Docs[0].Scores[0]*1000))
 	utils.Expect(t, "[0 18]", outputs.Docs[0].TokenSnippetLocations)
 
-	utils.Expect(t, "5", outputs.Docs[1].DocId)
+	utils.Expect(t, "5", outputs.Docs[1].DocID)
 	utils.Expect(t, "100", int(outputs.Docs[1].Scores[0]*1000))
 	utils.Expect(t, "[0 15]", outputs.Docs[1].TokenSnippetLocations)
 }

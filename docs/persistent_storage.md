@@ -1,7 +1,8 @@
-持久存储
+# 持久存储
+
 ====
 
-悟空引擎支持将搜索数据存入硬盘，并在当机重启动时从硬盘恢复数据。使用持久存储只需设置EngineInitOptions中的三个选项：
+悟空引擎支持将搜索数据存入硬盘，并在当机重启动时从硬盘恢复数据。使用持久存储只需设置 EngineInitOptions 中的三个选项：
 
 ```go
 type EngineInitOptions struct {
@@ -25,19 +26,20 @@ type EngineInitOptions struct {
 4. 在调用engine.RemoveDocument删除一个文档后，该文档会从持久存储中剔除，下次启动
 引擎时不会载入该文档。
 
-
-### 必须注意事项
+## 必须注意事项
 
 一、如果排序器使用[自定义评分字段](/docs/custom_scoring_criteria.md)，那么该类型必须在gob中注册，比如在左边的例子中需要在调用engine.Init前加入：
-```
+
+```golang
 gob.Register(MyScoringFields{})
 ```
+
 否则程序会崩溃。
 
-二、在引擎退出时请使用engine.Close()来关闭数据库，如果数据库未关闭，数据库文件会被锁定，
+二、在引擎退出时请使用 engine.Close() 来关闭数据库，如果数据库未关闭，数据库文件会被锁定，
 这会导致引擎重启失败。解锁的方法是，进入PersistentStorageFolder指定的目录，删除所有以"."开头的文件即可。
 
-### 性能测试
+## 性能测试
 
 [benchmark.go](/examples/benchmark.go)程序可用来测试持久存储的读写速度：
 
